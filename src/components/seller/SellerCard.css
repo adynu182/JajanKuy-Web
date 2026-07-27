@@ -1,0 +1,86 @@
+.seller-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.seller-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.seller-card:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.seller-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.seller-card-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.seller-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.seller-card-distance {
+  font-size: var(--font-xs);
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.seller-card-name {
+  font-size: var(--font-base);
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.seller-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-xs);
+  color: var(--text-secondary);
+}
+
+.seller-card-dot {
+  color: var(--text-tertiary);
+}
+
+.seller-card-mode {
+  text-transform: capitalize;
+}
+
+.seller-card-time {
+  font-size: var(--font-xs);
+  color: var(--text-tertiary);
+}
+
+.seller-card-arrow {
+  font-size: 20px;
+  color: var(--text-tertiary);
+  font-weight: 300;
+  flex-shrink: 0;
+}

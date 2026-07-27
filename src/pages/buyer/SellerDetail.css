@@ -1,0 +1,125 @@
+.detail-page {
+  padding: var(--space-md) 0 calc(var(--space-3xl) + var(--bottom-nav-height));
+}
+
+.detail-header {
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.detail-status-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.detail-name {
+  font-size: var(--font-xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* Info card */
+.detail-info {
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.detail-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.detail-info-row + .detail-info-row {
+  border-top: 1px solid var(--border-default);
+}
+
+.detail-info-label {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+}
+
+.detail-info-value {
+  font-size: var(--font-base);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Schedule */
+.detail-schedule {
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.detail-section-title {
+  font-size: var(--font-base);
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+}
+
+.detail-schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.detail-schedule-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: var(--space-md);
+  border-left: 2px solid var(--color-primary);
+}
+
+.detail-schedule-label {
+  font-size: var(--font-sm);
+  font-weight: 700;
+  color: var(--color-primary-light);
+}
+
+.detail-schedule-time {
+  font-size: var(--font-sm);
+  color: var(--text-primary);
+}
+
+.detail-schedule-address {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+}
+
+/* Actions */
+.detail-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.detail-actions > * {
+  flex: 1;
+}
+
+.detail-login-hint {
+  margin-top: var(--space-md);
+  font-size: var(--font-xs);
+  color: var(--text-tertiary);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* Empty */
+.detail-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-lg);
+  min-height: 60vh;
+  text-align: center;
+  padding: var(--space-lg);
+}
+
+.detail-empty h2 {
+  color: var(--text-secondary);
+}

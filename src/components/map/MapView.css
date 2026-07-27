@@ -1,0 +1,87 @@
+.map-container {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+}
+
+.map-leaflet {
+  width: 100%;
+  height: 300px;
+}
+
+.map-single .map-leaflet {
+  height: 200px;
+}
+
+.seller-marker,
+.user-marker {
+  background: none !important;
+  border: none !important;
+}
+
+/* Popup Styles */
+.map-popup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 140px;
+}
+
+.map-popup-name {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.map-popup-type {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.map-popup-status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.map-popup-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.map-popup-dot.open {
+  background: var(--color-open);
+}
+
+.map-popup-dot.closed {
+  background: var(--color-closed);
+}
+
+.map-popup-detail {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-primary-light);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  font-family: var(--font-family);
+}
+
+.map-popup-detail:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.map-popup-user {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
