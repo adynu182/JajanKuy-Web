@@ -18,7 +18,7 @@ export default function FollowingList() {
 
   useEffect(() => {
     getCurrentPosition().catch(() => {});
-  }, []);
+  }, [getCurrentPosition]);
 
   useEffect(() => {
     if (!user) {

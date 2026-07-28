@@ -4,14 +4,14 @@
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
 
-// TODO: Ganti dengan config Firebase project kamu
+// TODO: file ini statis, tidak diproses Vite — kalau ganti project Firebase, update manual di sini juga
 firebase.initializeApp({
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_PROJECT.firebaseapp.com',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_PROJECT.appspot.com',
-  messagingSenderId: 'YOUR_SENDER_ID',
-  appId: 'YOUR_APP_ID',
+  apiKey: 'AIzaSyBvjk2NRrxJ1T-FuMYEG3iVAhEIi37xgYk',
+  authDomain: 'jajankuy-web.firebaseapp.com',
+  projectId: 'jajankuy-web',
+  storageBucket: 'jajankuy-web.firebasestorage.app',
+  messagingSenderId: '439643042694',
+  appId: '1:439643042694:web:1836b8bcd25b97915ff207',
 });
 
 const messaging = firebase.messaging();

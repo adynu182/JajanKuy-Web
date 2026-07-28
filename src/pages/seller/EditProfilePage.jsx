@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { updateSellerProfile } from '../../services/sellerService';
 import Input, { Select } from '../../components/common/Input';
@@ -9,7 +8,6 @@ import { BUSINESS_TYPES, VEHICLE_TYPES, SELLER_MODES } from '../../utils/constan
 import './EditProfilePage.css';
 
 export default function EditProfilePage() {
-  const navigate = useNavigate();
   const { user, userProfile, refreshSellerProfile, loading: authLoading } = useAuth();
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);

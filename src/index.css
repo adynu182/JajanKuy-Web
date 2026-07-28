@@ -392,13 +392,6 @@ ul, ol {
   border-radius: var(--radius-sm);
 }
 
-/* ── Responsive ── */
-@media (min-width: 768px) {
-  :root {
-    --max-width: 480px;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

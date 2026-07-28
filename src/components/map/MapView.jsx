@@ -1,7 +1,6 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { useEffect } from 'react';
 import L from 'leaflet';
-import StatusBadge from '../seller/StatusBadge';
 import { timeAgo } from '../../utils/timeAgo';
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM, STATUS } from '../../utils/constants';
 import { useNavigate } from 'react-router-dom';

@@ -6,10 +6,8 @@ import {
   collection,
   query,
   where,
-  orderBy,
   getDocs,
   serverTimestamp,
-  Timestamp,
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { encodeGeohash, getGeohashRange } from './geoService';

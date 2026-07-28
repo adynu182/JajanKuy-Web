@@ -162,13 +162,16 @@ export default function DashboardPage() {
 
         {/* GPS fallback link */}
         {isGPSFailed && !isOpen && (
-          <Button
-            variant="link"
-            fullWidth
-            onClick={() => setShowMapPicker(true)}
-          >
-            GPS gagal? Pilih lokasi manual
-          </Button>
+          <div className="dashboard-gps-fallback">
+            {geoError && <p className="text-xs text-tertiary">{geoError.message}</p>}
+            <Button
+              variant="link"
+              fullWidth
+              onClick={() => setShowMapPicker(true)}
+            >
+              GPS gagal? Pilih lokasi manual
+            </Button>
+          </div>
         )}
 
         {/* Quick actions */}

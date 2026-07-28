@@ -33,7 +33,7 @@ export default function HomePage() {
     getCurrentPosition().catch(() => {
       // Silently fail — user can still browse without location
     });
-  }, []);
+  }, [getCurrentPosition]);
 
   // Fetch sellers
   useEffect(() => {
