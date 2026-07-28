@@ -8,6 +8,7 @@ import { SinglePinMap } from '../../components/map/MapView';
 import StatusBadge from '../../components/seller/StatusBadge';
 import Button from '../../components/common/Button';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import AuthModal from '../../components/common/AuthModal';
 import { timeAgo } from '../../utils/timeAgo';
 import { VEHICLE_TYPES } from '../../utils/constants';
 import './SellerDetail.css';
@@ -15,12 +16,13 @@ import './SellerDetail.css';
 export default function SellerDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, signInWithGoogle, ensureBuyerProfile } = useAuth();
+  const { user, ensureBuyerProfile } = useAuth();
 
   const [seller, setSeller] = useState(null);
   const [loading, setLoading] = useState(true);
   const [following, setFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const PENDING_FOLLOW_KEY = 'jajankuy_pending_follow';
 
@@ -31,7 +33,6 @@ export default function SellerDetail() {
         const data = await getSellerById(id);
         setSeller(data);
 
-        // Check follow status if logged in
         if (user) {
           const isFollow = await isFollowing(user.uid, id);
           setFollowing(isFollow);
@@ -56,7 +57,6 @@ export default function SellerDetail() {
       } else {
         await followSeller(currentUser.uid, id, seller.name);
         setFollowing(true);
-        // Register for notifications
         await registerForNotifications(currentUser.uid, 'buyers');
       }
     } catch (error) {
@@ -79,20 +79,15 @@ export default function SellerDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, seller, id]);
 
-  const handleFollow = async () => {
-    // If not logged in, remember intent then prompt Google sign-in (redirect)
+  const handleFollow = () => {
+    // If not logged in, remember intent then show login modal (Google + email)
     if (!user) {
       sessionStorage.setItem(PENDING_FOLLOW_KEY, id);
-      try {
-        await signInWithGoogle();
-      } catch (error) {
-        console.error('Login failed:', error);
-        sessionStorage.removeItem(PENDING_FOLLOW_KEY);
-      }
+      setShowAuthModal(true);
       return;
     }
 
-    await doFollowAction(user);
+    doFollowAction(user);
   };
 
   const handleDirections = () => {
@@ -200,10 +195,16 @@ export default function SellerDetail() {
 
         {!user && (
           <p className="detail-login-hint">
-            Login dengan Google untuk mengikuti penjual ini dan dapat notifikasi saat buka.
+            Masuk untuk mengikuti penjual ini dan dapat notifikasi saat buka.
           </p>
         )}
       </div>
+
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        title="Masuk untuk mengikuti penjual"
+      />
     </div>
   );
 }
