@@ -8,6 +8,7 @@ import { SinglePinMap } from '../../components/map/MapView';
 import StatusBadge from '../../components/seller/StatusBadge';
 import Button from '../../components/common/Button';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import AuthModal from '../../components/auth/AuthModal';
 import { timeAgo } from '../../utils/timeAgo';
 import { VEHICLE_TYPES } from '../../utils/constants';
 import './SellerDetail.css';
@@ -15,12 +16,13 @@ import './SellerDetail.css';
 export default function SellerDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, signInWithGoogle, ensureBuyerProfile } = useAuth();
+  const { user, ensureBuyerProfile } = useAuth();
 
   const [seller, setSeller] = useState(null);
   const [loading, setLoading] = useState(true);
   const [following, setFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const PENDING_FOLLOW_KEY = 'jajankuy_pending_follow';
 
@@ -80,19 +82,20 @@ export default function SellerDetail() {
   }, [user, seller, id]);
 
   const handleFollow = async () => {
-    // If not logged in, remember intent then prompt Google sign-in (redirect)
+    // Belum login → buka modal auth (Google atau email, terserah user pilih apa).
     if (!user) {
-      sessionStorage.setItem(PENDING_FOLLOW_KEY, id);
-      try {
-        await signInWithGoogle();
-      } catch (error) {
-        console.error('Login failed:', error);
-        sessionStorage.removeItem(PENDING_FOLLOW_KEY);
-      }
+      setShowAuthModal(true);
       return;
     }
 
     await doFollowAction(user);
+  };
+
+  // Login email/daftar lewat modal selesai secara sinkron (beda dari Google yang
+  // redirect), jadi begitu sukses kita bisa langsung lanjutkan aksi follow-nya.
+  const handleAuthSuccess = (newUser) => {
+    setShowAuthModal(false);
+    doFollowAction(newUser);
   };
 
   const handleDirections = () => {
@@ -200,10 +203,17 @@ export default function SellerDetail() {
 
         {!user && (
           <p className="detail-login-hint">
-            Login dengan Google untuk mengikuti penjual ini dan dapat notifikasi saat buka.
+            Login (Google atau email) untuk mengikuti penjual ini dan dapat notifikasi saat buka.
           </p>
         )}
       </div>
+
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={handleAuthSuccess}
+        onBeforeGoogleRedirect={() => sessionStorage.setItem(PENDING_FOLLOW_KEY, id)}
+      />
     </div>
   );
 }

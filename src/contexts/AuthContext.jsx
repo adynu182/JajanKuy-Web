@@ -4,6 +4,10 @@ import {
   signInWithRedirect,
   getRedirectResult,
   signOut as firebaseSignOut,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  updateProfile,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, googleProvider, db } from '../config/firebase';
@@ -73,6 +77,46 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const signUpWithEmail = async (email, password, displayName) => {
+    try {
+      setAuthError(null);
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      if (displayName) {
+        // Isi displayName biar konsisten dengan user yang login lewat Google
+        // (mis. buat ditampilkan di Navbar / dashboard).
+        await updateProfile(credential.user, { displayName });
+      }
+      return credential.user;
+    } catch (error) {
+      console.error('Email sign-up error:', error);
+      setAuthError(error);
+      throw error;
+    }
+  };
+
+  const signInWithEmail = async (email, password) => {
+    try {
+      setAuthError(null);
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+      return credential.user;
+    } catch (error) {
+      console.error('Email sign-in error:', error);
+      setAuthError(error);
+      throw error;
+    }
+  };
+
+  const resetPassword = async (email) => {
+    try {
+      setAuthError(null);
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      console.error('Password reset error:', error);
+      setAuthError(error);
+      throw error;
+    }
+  };
+
   const signOut = async () => {
     try {
       await firebaseSignOut(auth);
@@ -91,7 +135,7 @@ export function AuthProvider({ children }) {
     const buyerDoc = await getDoc(buyerRef);
     if (!buyerDoc.exists()) {
       await setDoc(buyerRef, {
-        authProvider: 'google',
+        authProvider: user.providerData?.[0]?.providerId === 'password' ? 'email' : 'google',
         fcmTokens: [],
         createdAt: serverTimestamp(),
       });
@@ -115,6 +159,9 @@ export function AuthProvider({ children }) {
     loading,
     authError,
     signInWithGoogle,
+    signUpWithEmail,
+    signInWithEmail,
+    resetPassword,
     signOut,
     ensureBuyerProfile,
     refreshSellerProfile,

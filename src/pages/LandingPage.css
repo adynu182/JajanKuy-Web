@@ -160,6 +160,11 @@
   background: var(--border-default);
 }
 
+.landing-auth-row {
+  display: flex;
+  gap: var(--space-sm);
+}
+
 .landing-note {
   font-size: var(--font-xs);
   color: var(--text-tertiary);

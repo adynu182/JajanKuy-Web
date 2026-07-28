@@ -2,12 +2,16 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Button from '../components/common/Button';
+import AuthModal from '../components/auth/AuthModal';
+import { getAuthErrorMessage } from '../utils/authErrors';
 import './LandingPage.css';
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const { user, signInWithGoogle, loading, authError } = useAuth();
   const [loggingIn, setLoggingIn] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState('login');
 
   // signInWithRedirect membawa halaman ini keluar ke Google lalu kembali lagi —
   // begitu context auth kedeteksi user, baru kita pindah ke dashboard.
@@ -31,6 +35,23 @@ export default function LandingPage() {
 
   const handleBuyerBrowse = () => {
     navigate('/');
+  };
+
+  const openEmailLogin = () => {
+    setAuthModalMode('login');
+    setShowAuthModal(true);
+  };
+
+  const openEmailDaftar = () => {
+    setAuthModalMode('daftar');
+    setShowAuthModal(true);
+  };
+
+  // AuthModal sudah nge-set user lewat context (onAuthStateChanged), jadi
+  // navigasi ke dashboard otomatis kejadian lewat useEffect di atas — di sini
+  // cukup tutup modalnya.
+  const handleEmailAuthSuccess = () => {
+    setShowAuthModal(false);
   };
 
   return (
@@ -108,22 +129,39 @@ export default function LandingPage() {
               />
             }
           >
-            Masuk sebagai Penjual
+            Lanjutkan dengan Google
           </Button>
+
+          <div className="landing-auth-row">
+            <Button variant="secondary" size="sm" fullWidth onClick={openEmailLogin}>
+              Masuk dengan Email
+            </Button>
+            <Button variant="ghost" size="sm" fullWidth onClick={openEmailDaftar}>
+              Daftar dengan Email
+            </Button>
+          </div>
 
           {authError && (
             <p className="landing-note" style={{ color: 'var(--color-danger)' }}>
-              Login gagal: {authError.message || 'Terjadi kesalahan, coba lagi.'}
+              Login gagal: {getAuthErrorMessage(authError)}
             </p>
           )}
 
           <p className="landing-note">
             Pembeli bisa langsung menjelajah tanpa login.
             <br />
-            Login diperlukan untuk follow penjual favorit.
+            Login (Google atau email) diperlukan untuk follow penjual favorit atau daftar sebagai penjual.
           </p>
         </div>
       </div>
+
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={handleEmailAuthSuccess}
+        initialMode={authModalMode}
+        showGoogleOption={false}
+      />
     </div>
   );
 }
