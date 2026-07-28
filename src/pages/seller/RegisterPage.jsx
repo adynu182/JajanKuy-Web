@@ -46,7 +46,6 @@ export default function RegisterPage() {
       await createSellerProfile(user.uid, {
         ...form,
         email: user.email,
-        authProvider: user.providerData?.[0]?.providerId === 'password' ? 'email' : 'google',
       });
       await refreshSellerProfile();
       navigate('/seller/dashboard');

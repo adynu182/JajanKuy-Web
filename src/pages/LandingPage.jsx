@@ -2,16 +2,20 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Button from '../components/common/Button';
-import AuthModal from '../components/auth/AuthModal';
+import Input from '../components/common/Input';
 import { getAuthErrorMessage } from '../utils/authErrors';
 import './LandingPage.css';
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const { user, signInWithGoogle, loading, authError } = useAuth();
+  const { user, signInWithGoogle, signInWithEmail, signUpWithEmail, resetPassword, loading, authError } = useAuth();
   const [loggingIn, setLoggingIn] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState('login');
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [authMode, setAuthMode] = useState('login'); // 'login' | 'register'
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
 
   // signInWithRedirect membawa halaman ini keluar ke Google lalu kembali lagi —
   // begitu context auth kedeteksi user, baru kita pindah ke dashboard.
@@ -33,25 +37,42 @@ export default function LandingPage() {
     }
   };
 
+  const handleEmailAuth = async (e) => {
+    e.preventDefault();
+    setEmailLoading(true);
+    try {
+      if (authMode === 'login') {
+        await signInWithEmail(email, password);
+      } else {
+        await signUpWithEmail(email, password);
+      }
+      // useEffect di atas yang nangkep perubahan `user` bakal urus navigasinya
+    } catch (error) {
+      console.error('Email auth failed:', error);
+    } finally {
+      setEmailLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      return;
+    }
+    try {
+      await resetPassword(email);
+      setResetSent(true);
+    } catch (error) {
+      console.error('Reset password failed:', error);
+    }
+  };
+
+  const toggleAuthMode = () => {
+    setAuthMode((prev) => (prev === 'login' ? 'register' : 'login'));
+    setResetSent(false);
+  };
+
   const handleBuyerBrowse = () => {
     navigate('/');
-  };
-
-  const openEmailLogin = () => {
-    setAuthModalMode('login');
-    setShowAuthModal(true);
-  };
-
-  const openEmailDaftar = () => {
-    setAuthModalMode('daftar');
-    setShowAuthModal(true);
-  };
-
-  // AuthModal sudah nge-set user lewat context (onAuthStateChanged), jadi
-  // navigasi ke dashboard otomatis kejadian lewat useEffect di atas — di sini
-  // cukup tutup modalnya.
-  const handleEmailAuthSuccess = () => {
-    setShowAuthModal(false);
   };
 
   return (
@@ -129,39 +150,75 @@ export default function LandingPage() {
               />
             }
           >
-            Lanjutkan dengan Google
+            Masuk sebagai Penjual
           </Button>
 
-          <div className="landing-auth-row">
-            <Button variant="secondary" size="sm" fullWidth onClick={openEmailLogin}>
-              Masuk dengan Email
-            </Button>
-            <Button variant="ghost" size="sm" fullWidth onClick={openEmailDaftar}>
-              Daftar dengan Email
-            </Button>
-          </div>
+          {!showEmailForm ? (
+            <button
+              type="button"
+              className="landing-email-toggle"
+              onClick={() => setShowEmailForm(true)}
+            >
+              atau masuk/daftar pakai email
+            </button>
+          ) : (
+            <form className="landing-email-form" onSubmit={handleEmailAuth}>
+              <Input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+              />
+              <Input
+                type="password"
+                placeholder="Password (min. 6 karakter)"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                autoComplete={authMode === 'login' ? 'current-password' : 'new-password'}
+              />
+              <Button type="submit" variant="secondary" fullWidth loading={emailLoading}>
+                {authMode === 'login' ? 'Masuk' : 'Daftar Akun'}
+              </Button>
+
+              {authMode === 'login' && (
+                resetSent ? (
+                  <p className="landing-note" style={{ color: 'var(--color-primary)' }}>
+                    Link reset password sudah dikirim ke {email}, cek inbox/spam ya.
+                  </p>
+                ) : (
+                  <button type="button" className="landing-mode-toggle" onClick={handleForgotPassword}>
+                    Lupa password?
+                  </button>
+                )
+              )}
+
+              <button
+                type="button"
+                className="landing-mode-toggle"
+                onClick={toggleAuthMode}
+              >
+                {authMode === 'login' ? 'Belum punya akun? Daftar' : 'Sudah punya akun? Masuk'}
+              </button>
+            </form>
+          )}
 
           {authError && (
             <p className="landing-note" style={{ color: 'var(--color-danger)' }}>
-              Login gagal: {getAuthErrorMessage(authError)}
+              {getAuthErrorMessage(authError)}
             </p>
           )}
 
           <p className="landing-note">
             Pembeli bisa langsung menjelajah tanpa login.
             <br />
-            Login (Google atau email) diperlukan untuk follow penjual favorit atau daftar sebagai penjual.
+            Login diperlukan untuk follow penjual favorit.
           </p>
         </div>
       </div>
-
-      <AuthModal
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-        onSuccess={handleEmailAuthSuccess}
-        initialMode={authModalMode}
-        showGoogleOption={false}
-      />
     </div>
   );
 }

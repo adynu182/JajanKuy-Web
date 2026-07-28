@@ -52,7 +52,7 @@ export default function FollowingList() {
             <h2>Ikuti penjual favoritmu</h2>
             <p>Login untuk mengikuti penjual dan mendapat notifikasi saat mereka buka</p>
             <Button variant="primary" onClick={() => navigate('/welcome')}>
-              Masuk
+              Masuk dengan Google
             </Button>
           </div>
         </div>

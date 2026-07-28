@@ -160,14 +160,47 @@
   background: var(--border-default);
 }
 
-.landing-auth-row {
-  display: flex;
-  gap: var(--space-sm);
-}
-
 .landing-note {
   font-size: var(--font-xs);
   color: var(--text-tertiary);
   text-align: center;
   line-height: 1.6;
+}
+
+.landing-email-toggle {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  font-size: var(--font-sm);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  padding: var(--space-xs);
+  align-self: center;
+}
+
+.landing-email-toggle:hover {
+  color: var(--text-secondary);
+}
+
+.landing-email-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  animation: slideUp 0.3s ease;
+}
+
+.landing-mode-toggle {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: var(--font-sm);
+  font-weight: 600;
+  cursor: pointer;
+  padding: var(--space-xs);
+  align-self: center;
+}
+
+.landing-mode-toggle:hover {
+  text-decoration: underline;
 }

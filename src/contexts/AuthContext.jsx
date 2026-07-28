@@ -3,11 +3,10 @@ import {
   onAuthStateChanged,
   signInWithRedirect,
   getRedirectResult,
-  signOut as firebaseSignOut,
-  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   sendPasswordResetEmail,
-  updateProfile,
+  signOut as firebaseSignOut,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, googleProvider, db } from '../config/firebase';
@@ -77,30 +76,25 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const signUpWithEmail = async (email, password, displayName) => {
+  const signInWithEmail = async (email, password) => {
     try {
       setAuthError(null);
-      const credential = await createUserWithEmailAndPassword(auth, email, password);
-      if (displayName) {
-        // Isi displayName biar konsisten dengan user yang login lewat Google
-        // (mis. buat ditampilkan di Navbar / dashboard).
-        await updateProfile(credential.user, { displayName });
-      }
-      return credential.user;
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      return result.user;
     } catch (error) {
-      console.error('Email sign-up error:', error);
+      console.error('Email sign-in error:', error);
       setAuthError(error);
       throw error;
     }
   };
 
-  const signInWithEmail = async (email, password) => {
+  const signUpWithEmail = async (email, password) => {
     try {
       setAuthError(null);
-      const credential = await signInWithEmailAndPassword(auth, email, password);
-      return credential.user;
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      return result.user;
     } catch (error) {
-      console.error('Email sign-in error:', error);
+      console.error('Email sign-up error:', error);
       setAuthError(error);
       throw error;
     }
@@ -111,7 +105,7 @@ export function AuthProvider({ children }) {
       setAuthError(null);
       await sendPasswordResetEmail(auth, email);
     } catch (error) {
-      console.error('Password reset error:', error);
+      console.error('Reset password error:', error);
       setAuthError(error);
       throw error;
     }
@@ -135,7 +129,7 @@ export function AuthProvider({ children }) {
     const buyerDoc = await getDoc(buyerRef);
     if (!buyerDoc.exists()) {
       await setDoc(buyerRef, {
-        authProvider: user.providerData?.[0]?.providerId === 'password' ? 'email' : 'google',
+        authProvider: 'google',
         fcmTokens: [],
         createdAt: serverTimestamp(),
       });
@@ -159,8 +153,8 @@ export function AuthProvider({ children }) {
     loading,
     authError,
     signInWithGoogle,
-    signUpWithEmail,
     signInWithEmail,
+    signUpWithEmail,
     resetPassword,
     signOut,
     ensureBuyerProfile,

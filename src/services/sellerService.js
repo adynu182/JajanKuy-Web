@@ -34,7 +34,7 @@ export async function createSellerProfile(uid, data) {
     lastUpdate: serverTimestamp(),
     createdAt: serverTimestamp(),
     fcmTokens: [],
-    authProvider: data.authProvider || 'google',
+    authProvider: 'google',
     email: data.email || '',
   };
 
