@@ -30,6 +30,13 @@ export function AuthProvider({ children }) {
     });
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      // Penting: re-arm loading di SETIAP perubahan auth state (bukan cuma sekali
+      // pas app pertama dibuka). Tanpa ini, komponen lain (mis. LandingPage) bisa
+      // sempat baca `userRole` versi lama sebelum pengecekan Firestore di bawah
+      // ini selesai, lalu salah redirect ke halaman daftar padahal user sudah
+      // terdaftar sebagai seller.
+      setLoading(true);
+
       if (firebaseUser) {
         setUser(firebaseUser);
         // Check if user is a registered seller
