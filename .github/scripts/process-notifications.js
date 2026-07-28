@@ -8,16 +8,18 @@
  * Uses Firebase Admin SDK with service account from GitHub Secrets.
  */
 
-const admin = require('firebase-admin');
+import { initializeApp, cert } from 'firebase-admin/app';
+import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { getMessaging } from 'firebase-admin/messaging';
 
 // Initialize Firebase Admin
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+initializeApp({
+  credential: cert(serviceAccount),
 });
 
-const db = admin.firestore();
-const messaging = admin.messaging();
+const db = getFirestore();
+const messaging = getMessaging();
 
 const REMINDER_THRESHOLD_MS = 6 * 60 * 60 * 1000; // 6 hours
 
@@ -79,7 +81,7 @@ async function processFollowerNotifications() {
       }
 
       // Mark as processed
-      await doc.ref.update({ processed: true, processedAt: admin.firestore.FieldValue.serverTimestamp() });
+      await doc.ref.update({ processed: true, processedAt: FieldValue.serverTimestamp() });
     } catch (error) {
       console.error(`  Error processing ${doc.id}:`, error.message);
     }
