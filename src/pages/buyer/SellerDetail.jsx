@@ -22,6 +22,8 @@ export default function SellerDetail() {
   const [following, setFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
 
+  const PENDING_FOLLOW_KEY = 'jajankuy_pending_follow';
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -43,16 +45,9 @@ export default function SellerDetail() {
     fetchData();
   }, [id, user]);
 
-  const handleFollow = async () => {
+  const doFollowAction = async (currentUser) => {
     setFollowLoading(true);
     try {
-      let currentUser = user;
-
-      // If not logged in, prompt Google sign-in
-      if (!currentUser) {
-        currentUser = await signInWithGoogle();
-      }
-
       await ensureBuyerProfile();
 
       if (following) {
@@ -69,6 +64,35 @@ export default function SellerDetail() {
     } finally {
       setFollowLoading(false);
     }
+  };
+
+  // signInWithRedirect membawa halaman ini keluar ke Google lalu kembali lagi,
+  // jadi kita gak bisa lanjut follow di baris yang sama setelah await login.
+  // Simpan dulu id penjual yang mau di-follow, lalu lanjutkan otomatis di sini
+  // begitu halaman ini reload dan user sudah terautentikasi.
+  useEffect(() => {
+    const pendingId = sessionStorage.getItem(PENDING_FOLLOW_KEY);
+    if (user && seller && pendingId === id) {
+      sessionStorage.removeItem(PENDING_FOLLOW_KEY);
+      doFollowAction(user);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, seller, id]);
+
+  const handleFollow = async () => {
+    // If not logged in, remember intent then prompt Google sign-in (redirect)
+    if (!user) {
+      sessionStorage.setItem(PENDING_FOLLOW_KEY, id);
+      try {
+        await signInWithGoogle();
+      } catch (error) {
+        console.error('Login failed:', error);
+        sessionStorage.removeItem(PENDING_FOLLOW_KEY);
+      }
+      return;
+    }
+
+    await doFollowAction(user);
   };
 
   const handleDirections = () => {

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Button from '../components/common/Button';
@@ -5,15 +6,26 @@ import './LandingPage.css';
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const { signInWithGoogle, loading } = useAuth();
+  const { user, signInWithGoogle, loading, authError } = useAuth();
+  const [loggingIn, setLoggingIn] = useState(false);
+
+  // signInWithRedirect membawa halaman ini keluar ke Google lalu kembali lagi —
+  // begitu context auth kedeteksi user, baru kita pindah ke dashboard.
+  // Kalau ternyata belum terdaftar jadi seller, SellerRoute akan otomatis
+  // mengarahkan ke /seller/register.
+  useEffect(() => {
+    if (user) {
+      navigate('/seller/dashboard');
+    }
+  }, [user, navigate]);
 
   const handleSellerLogin = async () => {
+    setLoggingIn(true);
     try {
-      await signInWithGoogle();
-      // AuthContext will detect role, App.jsx will redirect
-      navigate('/seller/dashboard');
+      await signInWithGoogle(); // halaman akan navigasi ke Google di sini
     } catch (error) {
       console.error('Login failed:', error);
+      setLoggingIn(false);
     }
   };
 
@@ -86,7 +98,7 @@ export default function LandingPage() {
             size="lg"
             fullWidth
             onClick={handleSellerLogin}
-            loading={loading}
+            loading={loggingIn || loading}
             icon={
               <img
                 src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -98,6 +110,12 @@ export default function LandingPage() {
           >
             Masuk sebagai Penjual
           </Button>
+
+          {authError && (
+            <p className="landing-note" style={{ color: 'var(--color-danger)' }}>
+              Login gagal: {authError.message || 'Terjadi kesalahan, coba lagi.'}
+            </p>
+          )}
 
           <p className="landing-note">
             Pembeli bisa langsung menjelajah tanpa login.

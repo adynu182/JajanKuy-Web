@@ -1,7 +1,8 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import {
   onAuthStateChanged,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut as firebaseSignOut,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -14,8 +15,17 @@ export function AuthProvider({ children }) {
   const [userProfile, setUserProfile] = useState(null);
   const [userRole, setUserRole] = useState(null); // 'seller' | 'buyer' | null
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
+    // Selesaikan proses login kalau baru saja kembali dari halaman redirect Google.
+    // signInWithRedirect gak langsung ngasih hasil di tempat manggilnya — hasilnya
+    // baru bisa diambil di sini, setelah halaman reload balik dari Google.
+    getRedirectResult(auth).catch((error) => {
+      console.error('Redirect sign-in error:', error);
+      setAuthError(error);
+    });
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser);
@@ -52,10 +62,13 @@ export function AuthProvider({ children }) {
 
   const signInWithGoogle = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      return result.user;
+      setAuthError(null);
+      // Redirect (bukan popup) — popup gak reliable di mobile browser & PWA standalone.
+      // Baris setelah ini gak akan sempat jalan karena halaman langsung navigasi ke Google.
+      await signInWithRedirect(auth, googleProvider);
     } catch (error) {
       console.error('Google sign-in error:', error);
+      setAuthError(error);
       throw error;
     }
   };
@@ -100,6 +113,7 @@ export function AuthProvider({ children }) {
     userProfile,
     userRole,
     loading,
+    authError,
     signInWithGoogle,
     signOut,
     ensureBuyerProfile,
