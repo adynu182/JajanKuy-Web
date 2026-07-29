@@ -6,6 +6,7 @@ import LoadingSpinner from './components/common/LoadingSpinner';
 
 // Pages
 import LandingPage from './pages/LandingPage';
+import MenuPage from './pages/MenuPage';
 import HomePage from './pages/buyer/HomePage';
 import SellerDetail from './pages/buyer/SellerDetail';
 import FollowingList from './pages/buyer/FollowingList';
@@ -14,11 +15,21 @@ import DashboardPage from './pages/seller/DashboardPage';
 import EditProfilePage from './pages/seller/EditProfilePage';
 import EditSchedulePage from './pages/seller/EditSchedulePage';
 
+// Wajib login, apapun statusnya (buyer atau seller) — dipakai untuk halaman
+// menu/hub dan form buat dagangan.
+function RequireAuth({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return <LoadingSpinner fullScreen />;
+  if (!user) return <Navigate to="/welcome" replace />;
+  return children;
+}
+
 function SellerRoute({ children }) {
   const { user, userRole, loading } = useAuth();
   if (loading) return <LoadingSpinner fullScreen />;
   if (!user) return <Navigate to="/welcome" replace />;
-  if (userRole !== 'seller') return <Navigate to="/seller/register" replace />;
+  // Belum bikin dagangan -> balik ke menu, biar bisa pilih "Buat Dagangan"
+  if (userRole !== 'seller') return <Navigate to="/menu" replace />;
   return children;
 }
 
@@ -40,8 +51,25 @@ function AppRoutes() {
           <Route path="/seller/:id" element={<SellerDetail />} />
           <Route path="/following" element={<FollowingList />} />
 
-          {/* Seller auth required */}
-          <Route path="/seller/register" element={<RegisterPage />} />
+          {/* Wajib login (buyer atau seller, gak masalah) */}
+          <Route
+            path="/menu"
+            element={
+              <RequireAuth>
+                <MenuPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/seller/register"
+            element={
+              <RequireAuth>
+                <RegisterPage />
+              </RequireAuth>
+            }
+          />
+
+          {/* Wajib sudah bikin dagangan (seller) */}
           <Route
             path="/seller/dashboard"
             element={

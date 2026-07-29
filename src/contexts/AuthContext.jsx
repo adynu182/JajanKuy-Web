@@ -39,22 +39,27 @@ export function AuthProvider({ children }) {
 
       if (firebaseUser) {
         setUser(firebaseUser);
-        // Check if user is a registered seller
         try {
+          // Status dasar SEMUA akun yang login adalah "pembeli" — pastikan
+          // profil buyer selalu ada, gak perlu nunggu user tap Follow dulu.
+          const buyerRef = doc(db, 'buyers', firebaseUser.uid);
+          const buyerSnap = await getDoc(buyerRef);
+          if (!buyerSnap.exists()) {
+            await setDoc(buyerRef, {
+              fcmTokens: [],
+              createdAt: serverTimestamp(),
+            });
+          }
+
+          // "Penjual" bukan jalur akun terpisah — itu status tambahan begitu
+          // user bikin dagangan. Cek apakah user ini sudah punya dagangan.
           const sellerDoc = await getDoc(doc(db, 'sellers', firebaseUser.uid));
           if (sellerDoc.exists()) {
             setUserProfile(sellerDoc.data());
             setUserRole('seller');
           } else {
-            // Check if they're a buyer
-            const buyerDoc = await getDoc(doc(db, 'buyers', firebaseUser.uid));
-            if (buyerDoc.exists()) {
-              setUserProfile(buyerDoc.data());
-              setUserRole('buyer');
-            } else {
-              setUserRole(null);
-              setUserProfile(null);
-            }
+            setUserProfile(null);
+            setUserRole('buyer');
           }
         } catch (error) {
           console.error('Error fetching user profile:', error);
@@ -136,11 +141,9 @@ export function AuthProvider({ children }) {
     const buyerDoc = await getDoc(buyerRef);
     if (!buyerDoc.exists()) {
       await setDoc(buyerRef, {
-        authProvider: 'google',
         fcmTokens: [],
         createdAt: serverTimestamp(),
       });
-      setUserRole('buyer');
     }
   };
 

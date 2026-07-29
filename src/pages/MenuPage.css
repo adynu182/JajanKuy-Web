@@ -1,0 +1,72 @@
+.menu-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: var(--space-lg) 0;
+}
+
+.menu-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.menu-header h1 {
+  font-size: var(--font-2xl);
+  margin-bottom: var(--space-xs);
+}
+
+.menu-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.menu-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  text-align: left;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  padding: var(--space-lg);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.menu-card:hover {
+  transform: translateY(-2px);
+}
+
+.menu-card:active {
+  transform: translateY(0);
+}
+
+.menu-card-icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.menu-card-text h3 {
+  margin: 0 0 4px;
+  font-size: var(--font-lg);
+}
+
+.menu-card-text p {
+  margin: 0;
+}
+
+.menu-signout {
+  display: block;
+  margin: var(--space-xl) auto 0;
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  font-size: var(--font-sm);
+  cursor: pointer;
+  padding: var(--space-xs) var(--space-md);
+}
+
+.menu-signout:hover {
+  color: var(--color-danger);
+}

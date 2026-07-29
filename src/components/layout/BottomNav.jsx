@@ -20,8 +20,12 @@ export default function BottomNav() {
 
   const tabs = userRole === 'seller' ? SELLER_TABS : BUYER_TABS;
 
-  // Don't show on landing/register
-  if (location.pathname === '/welcome' || location.pathname === '/seller/register') {
+  // Don't show on landing/menu/register
+  if (
+    location.pathname === '/welcome' ||
+    location.pathname === '/menu' ||
+    location.pathname === '/seller/register'
+  ) {
     return null;
   }
 

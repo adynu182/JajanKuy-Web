@@ -36,6 +36,7 @@ export const SEARCH_RADIUS_KM = 5;
 export const ROUTES = {
   HOME: '/',
   LANDING: '/welcome',
+  MENU: '/menu',
   SELLER_REGISTER: '/seller/register',
   SELLER_DASHBOARD: '/seller/dashboard',
   SELLER_EDIT_PROFILE: '/seller/edit-profile',

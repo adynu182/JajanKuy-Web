@@ -18,12 +18,11 @@ export default function LandingPage() {
   const [resetSent, setResetSent] = useState(false);
 
   // signInWithRedirect membawa halaman ini keluar ke Google lalu kembali lagi —
-  // begitu context auth kedeteksi user, baru kita pindah ke dashboard.
-  // Kalau ternyata belum terdaftar jadi seller, SellerRoute akan otomatis
-  // mengarahkan ke /seller/register.
+  // begitu context auth kedeteksi user, kita pindah ke halaman menu (hub),
+  // supaya user bisa pilih mau lihat pedagang sekitar atau kelola dagangan.
   useEffect(() => {
     if (user) {
-      navigate('/seller/dashboard');
+      navigate('/menu');
     }
   }, [user, navigate]);
 
@@ -150,7 +149,7 @@ export default function LandingPage() {
               />
             }
           >
-            Masuk sebagai Penjual
+            Masuk
           </Button>
 
           {!showEmailForm ? (
@@ -213,9 +212,7 @@ export default function LandingPage() {
           )}
 
           <p className="landing-note">
-            Pembeli bisa langsung menjelajah tanpa login.
-            <br />
-            Login diperlukan untuk follow penjual favorit.
+            Jelajahi tanpa login, atau Masuk buat follow penjual favorit &amp; buka dagangan sendiri.
           </p>
         </div>
       </div>
